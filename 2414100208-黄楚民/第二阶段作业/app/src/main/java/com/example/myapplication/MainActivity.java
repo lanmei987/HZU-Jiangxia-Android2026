@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 初始化控件（增加空指针防护）
+        // 初始化控件
         ivContent = findViewById(R.id.dog);
         btnGetImage = findViewById(R.id.button);
         btnPostTest = findViewById(R.id.button2);
@@ -48,14 +48,14 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // 初始化工具类（防止空指针）
+        // 初始化工具类
         okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, java.util.concurrent.TimeUnit.SECONDS) // 超时设置
                 .readTimeout(10, java.util.concurrent.TimeUnit.SECONDS)
                 .build();
         appDatabase = AppDatabase.getInstance(this);
 
-        // GET按钮：有网请求，无网提示（修复所有闪退点）
+        // GET按钮：有网请求，无网提示
         btnGetImage.setOnClickListener(v -> {
             if (!isNetworkAvailable()) {
                 Toast.makeText(MainActivity.this, "网络异常，请检查网络连接", Toast.LENGTH_SHORT).show();
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // 检查网络（增加完整防护）
+    // 检查网络
     private boolean isNetworkAvailable() {
         try {
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // GET请求（完全修复闪退）
+    // GET请求
     private void fetchDogImage() {
         Request request = new Request.Builder()
                 .url("https://dog.ceo/api/breeds/image/random")
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 try {
-                    // 读取响应并解析（增加非空防护）
+                    // 读取响应并解析
                     String responseBody = response.body().string();
                     if (responseBody == null || responseBody.isEmpty()) {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, "响应数据为空", Toast.LENGTH_SHORT).show());
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                     JSONObject jsonObject = new JSONObject(responseBody);
-                    String imageUrl = jsonObject.optString("message", ""); // 安全解析，避免崩溃
+                    String imageUrl = jsonObject.optString("message", ""); 
                     if (imageUrl.isEmpty()) {
                         runOnUiThread(() -> Toast.makeText(MainActivity.this, "解析图片URL失败", Toast.LENGTH_SHORT).show());
                         return;
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }).start();
 
-                    // 主线程加载图片（Glide增加防护）
+                    // 主线程加载图片
                     runOnUiThread(() -> {
                         try {
                             Glide.with(MainActivity.this)
@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // POST请求（修复闪退）
+    // POST请求
     private void performPostRequest() {
         RequestBody body = new FormBody.Builder()
                 .add("test_key", "test_value")
@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // 加载数据库缓存（修复闪退）
+    // 加载数据库缓存
     private void loadCachedDataFromDB() {
         new Thread(() -> {
             try {
